@@ -1,0 +1,17 @@
+{
+    "title": "TestPack",
+    "description": "This modpack is literally just Magical Crops and Morph",
+    "version": "1.0.0",
+    "mcversion" : "1.7.10",
+    "mods": [
+        {
+            "title": "Magical Crops",
+            "cursename": "magical-crops",
+            "release": 2236937
+        },
+        {
+            "title": "Morph",
+            "cursename": "morph"
+        }
+    ]
+}

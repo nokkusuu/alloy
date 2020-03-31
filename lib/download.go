@@ -4,14 +4,8 @@ import (
 	"os"
 	"net/http"
 	"io"
+	"strconv"
 )
-
-type Download struct {
-	URL string
-	Dest string
-	Progress chan uint64
-	ProgInt uint64
-}
 
 func (down *Download) Write(p []byte) (int, error) {
 	n := len(p)
@@ -26,11 +20,20 @@ func (down *Download) Do() error {
 		return err
 	}
 
-	resp, err := http.Get(down.URL)
+	req, err := http.NewRequest("GET", down.URL, nil)
+	req.Header.Add("User-Agent", UserAgent)
+
+	resp, err := HTTPClient.Do(req)
 	defer resp.Body.Close()
 	if err != nil {
 		out.Close()
 		return err
+	}
+
+	v, _ := strconv.ParseInt(resp.Header.Get("Content-Length"), 10, 64)
+	down.TotalSize = uint64(v)
+	if down.TotalSize == 0 {
+		down.TotalSize = 1 // prevent divide by zero error
 	}
 
 	if _, err = io.Copy(out, io.TeeReader(resp.Body, down)); err != nil {
